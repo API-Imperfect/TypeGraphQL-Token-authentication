@@ -54,6 +54,8 @@ export class User extends BaseEntity {
 
     @Column("bool", {default:false}) confirmed: boolean;
 
+    @Column("int", { default: 0 }) tokenVersion: number;
+
     @Field() @CreateDateColumn({ name: "created_at" }) createdAt: Date;
     @Field() @UpdateDateColumn({ name: "updated_at" }) updatedAt: Date;
     @Field() @DeleteDateColumn({ name: "deleted_at"}) deleted_at?: Date;
