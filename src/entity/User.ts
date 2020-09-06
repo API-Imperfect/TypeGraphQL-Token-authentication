@@ -1,4 +1,13 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+    BaseEntity,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    Index,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from "typeorm";
 import { Field, ID, ObjectType, registerEnumType, Root } from "type-graphql";
 
 export enum userRoles {
@@ -23,14 +32,29 @@ export class User extends BaseEntity {
 
     @Field() @Column("text") lastName: string;
 
+    @Field()
+    @Index({ unique: true })
+    @Column({
+        unique: true,
+        nullable: false,
+    })
+    email: string;
+
     @Field(() => userRoles)
     @Column({
         type: "text",
         enum: [TEACHER, STUDENT],
+        default:userRoles.STUDENT,
     })
-    target: userRoles;
+    roles: userRoles;
 
     @Column() password: string;
+
+    @Column("bool", {default:false}) confirmed: boolean;
+
+    @Field() @CreateDateColumn({ name: "created_at" }) createdAt: Date;
+    @Field() @UpdateDateColumn({ name: "updated_at" }) updatedAt: Date;
+    @Field() @DeleteDateColumn({ name: "deleted_at"}) deleted_at?: Date;
 
     @Field() name(@Root() parent: User): string {
         return `${parent.firstName} ${parent.lastName}`;
