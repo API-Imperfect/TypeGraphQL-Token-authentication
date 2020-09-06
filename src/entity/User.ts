@@ -1,14 +1,16 @@
 import {
     BaseEntity,
+    BeforeInsert, BeforeUpdate,
     Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
     Index,
     PrimaryGeneratedColumn,
-    UpdateDateColumn,
+    UpdateDateColumn
 } from "typeorm";
 import { Field, ID, ObjectType, registerEnumType, Root } from "type-graphql";
+import bcrypt from "bcryptjs";
 
 export enum userRoles {
     TEACHER = "TEACHER",
@@ -58,5 +60,21 @@ export class User extends BaseEntity {
 
     @Field() name(@Root() parent: User): string {
         return `${parent.firstName} ${parent.lastName}`;
+
+    }
+
+    private static hashPassword(password: string): Promise<string> {
+        return bcrypt.hash(password, 12);
+    }
+
+    public comparePassword(password: string): Promise<boolean> {
+        return bcrypt.compare(password, this.password);
+    }
+
+    @BeforeInsert() @BeforeUpdate()
+    async savePassword(): Promise<void> {
+        if (this.password) {
+            this.password = await User.hashPassword(this.password);
+        }
     }
 }

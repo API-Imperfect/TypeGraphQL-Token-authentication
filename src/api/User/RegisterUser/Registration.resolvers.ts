@@ -5,6 +5,7 @@ import { User } from "../../../entity/User";
 import { sendEmail } from "../../../utils/sendEmail";
 import { createConfirmationUrl } from "../../../utils/createConfirmationUrl";
 
+
 @Resolver()
 export class RegistrationResolvers {
     @Mutation(() => RegistrationResponse)
