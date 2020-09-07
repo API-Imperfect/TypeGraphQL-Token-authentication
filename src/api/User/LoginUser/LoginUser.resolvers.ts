@@ -47,6 +47,7 @@ export class LoginUserResolvers {
                     success: true,
                     status: 200,
                     token,
+                    user
                 };
             } else {
                 return {

@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from "type-graphql";
+import { User } from "../../../entity/User";
 
 @ObjectType({ description: "Log In response object" })
 export class LoginUserResponse {
@@ -9,4 +10,6 @@ export class LoginUserResponse {
     @Field(() => String, { nullable: true }) error?: string | null;
 
     @Field(() => String, { nullable: true }) token: string | null;
+
+    @Field() user?: User
 }
