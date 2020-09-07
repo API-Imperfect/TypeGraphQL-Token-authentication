@@ -5,13 +5,14 @@ import express, { Application } from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import cors from "cors";
-import expressJwt from "express-jwt";
 import { connectionOptions } from "../ormconfig";
 import cookieParser from "cookie-parser";
 import { verify } from "jsonwebtoken";
 import { User } from "./entity/User";
 import {
-    createAccessToken, createRefreshToken, storeTokenInCookie,
+    createAccessToken,
+    createRefreshToken,
+    storeTokenInCookie,
 } from "./utils/createJWT";
 
 (async () => {
@@ -57,27 +58,22 @@ import {
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
             resolvers: [__dirname + "/api/**/*.resolvers.*"],
-        }), context: ({ req, res }) => {
-            return {
-                req, res, // @ts-ignore
-                user: req.user || null, // `req.user` comes from `express-jwt`
-            };
-        },
+        }),
+        context: ({ req, res }) => ({ req, res }),
     });
 
-    app.use(path, expressJwt({
-        secret: process.env.EXPRESS_JWT_SECRET!,
-        algorithms: ["HS256"],
-        credentialsRequired: false,
-    }));
-
-    app.use(cors({
-        credentials: true, origin: "http://localhost:3000",
-    }));
+    app.use(
+        cors({
+            credentials: true,
+            origin: "http://localhost:3000",
+        })
+    );
 
     apolloServer.applyMiddleware({ app, path });
 
     app.listen(PORT, () => {
-        console.log(`🚀 Server ready at http://localhost:4000${apolloServer.graphqlPath}`);
+        console.log(
+            `🚀 Server ready at http://localhost:4000${apolloServer.graphqlPath}`
+        );
     });
 })();
